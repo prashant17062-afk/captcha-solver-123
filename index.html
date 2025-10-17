@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Captcha Solver</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Optional custom styles if needed, though Tailwind handles most */
+        body {
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Captcha Solver</h1>
+
+        <div class="flex justify-center mb-6">
+            <img id="captchaImage" src="sample.png" alt="Captcha Image" class="border border-gray-300 rounded max-w-full h-auto">
+        </div>
+
+        <div class="mb-4">
+            <label for="captchaInput" class="block text-gray-700 text-sm font-bold mb-2">Enter the text from the image:</label>
+            <input type="text" id="captchaInput" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Your answer">
+        </div>
+
+        <button id="submitButton" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full transition duration-150 ease-in-out">
+            Verify Captcha
+        </button>
+
+        <p id="message" class="text-center mt-4 text-sm"></p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const captchaImage = document.getElementById('captchaImage');
+            const captchaInput = document.getElementById('captchaInput');
+            const submitButton = document.getElementById('submitButton');
+            const messageElement = document.getElementById('message');
+
+            const expectedCaptchaText = 'ADUR3'; // Based on the provided image: ADUR3
+
+            // Function to parse query parameters
+            function getQueryParam(param) {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get(param);
+            }
+
+            // Load image based on URL parameter or default
+            const imageUrl = getQueryParam('url');
+            if (imageUrl) {
+                captchaImage.src = imageUrl;
+            } else {
+                captchaImage.src = 'sample.png'; // Default to local sample.png
+            }
+
+            // Handle captcha submission
+            submitButton.addEventListener('click', () => {
+                const userInput = captchaInput.value.trim();
+
+                if (userInput === '') {
+                    messageElement.textContent = 'Please enter the captcha text.';
+                    messageElement.className = 'text-center mt-4 text-sm text-yellow-600';
+                    return;
+                }
+
+                if (userInput.toUpperCase() === expectedCaptchaText.toUpperCase()) {
+                    messageElement.textContent = 'Captcha verified successfully!';
+                    messageElement.className = 'text-center mt-4 text-sm text-green-600';
+                } else {
+                    messageElement.textContent = 'Incorrect captcha. Please try again.';
+                    messageElement.className = 'text-center mt-4 text-sm text-red-600';
+                }
+            });
+
+            // Allow pressing Enter key to submit
+            captchaInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    submitButton.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
